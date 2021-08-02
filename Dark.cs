@@ -30,13 +30,7 @@ namespace Camo {
 
 		public override void OnSceneWasInitialized(int buildIndex, string sceneName) {
 			if(modToggle && (!MelonPreferences.GetEntryValue<bool>("DarkScenes", "ZWOnly") || (MelonPreferences.GetEntryValue<bool>("DarkScenes", "ZWOnly") && sceneName == "zombie_warehouse")) && !MelonPreferences.GetEntryValue<bool>("DarkScenes", "ExtraBrightScene")) { //Main start check
-				FindShaders();
-
-				//Run all main methods to make scene dark
-				SetMaterials();
-				SetRenderers();
-				RemoveVolumetrics();
-				SpawnFlashlight();
+				MakeDark();
 
 			} else if(modToggle && MelonPreferences.GetEntryValue<bool>("DarkScenes", "ExtraBrightScene")) {
 				//Set extra bright settings :)
@@ -48,15 +42,14 @@ namespace Camo {
 			}
 		}
 
-		public override void OnUpdate() {
-			//Force reload
-			if(Input.GetKeyDown(KeyCode.P)) {
-				FindShaders();
-				SetMaterials();
-				SetRenderers();
-				RemoveVolumetrics();
-				SpawnFlashlight();
-			}
+		private void MakeDark() { //Basically just holds all the main methods
+			FindShaders();
+
+			//Run all main methods to make scene dark
+			SetMaterials();
+			SetRenderers();
+			RemoveVolumetrics();
+			SpawnFlashlight();
 		}
 
 		#region Dark Scene Setup
@@ -177,6 +170,7 @@ namespace Camo {
 			extraDarkLight = MelonPreferences.GetEntryValue<bool>("DarkScenes", "ExtraDarkFlashlight");
 
 			ModThatIsNotMod.BoneMenu.MenuCategory category = ModThatIsNotMod.BoneMenu.MenuManager.CreateCategory("Dark Scenes", Color.blue);
+			category.CreateFunctionElement("Rerun Scene Setup", Color.red, MakeDark);
 			category.CreateFunctionElement("CHANGES REQUIRE SCENE RELOAD", Color.red, null);
 			category.CreateBoolElement("Mod Toggle", Color.white, modToggle, ToggleMod);
 			category.CreateBoolElement("Extra Dark Scene", Color.white, extraDarkScene, ToggleDarkScene);
